@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindMesh Bókasafn</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
+  <script src="mindmesh-epub.js"></script>
+</head>
+<body>
+  <header>
+    <h1>MindMesh EPUB Bókasafn</h1>
+  </header>
+
+  <section id="library">
+    <h2>Opinbert bókasafn</h2>
+    <ul id="publicLibrary">
+      <li><button onclick="mindmeshEPUB.loadBook('kvenfrelsi.epub')">Kvenfrelsi (EPUB)</button></li>
+    </ul>
+
+    <h2>Mitt bókasafn</h2>
+    <input type="file" id="uploadEpub" accept=".epub" />
+    <ul id="privateLibrary"></ul>
+  </section>
+
+  <main id="reader"></main>
+
+  <section id="controls">
+    <button onclick="mindmeshEPUB.prevPage()">Fyrri síða</button>
+    <button onclick="mindmeshEPUB.nextPage()">Næsta síða</button>
+    <button onclick="mindmeshEPUB.enableThemes(); mindmeshEPUB.toggleTheme('dark')">Náttstilling</button>
+    <button onclick="mindmeshEPUB.enableThemes(); mindmeshEPUB.toggleTheme('light')">Dagstilling</button>
+    <button onclick="mindmeshEPUB.readAloud()">Lesa upp</button>
+    <button onclick="mindmeshEPUB.stopReading()">Stöðva lestur</button>
+  </section>
+
+  <script>
+    document.getElementById("uploadEpub").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const base64 = evt.target.result;
+          const key = "userbook-" + file.name;
+          localStorage.setItem(key, base64);
+          mindmeshEPUB.addToPrivateLibrary(key, file.name);
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    window.onload = () => {
+      mindmeshEPUB.loadPrivateLibrary();
+    }
+  </script>
+</body>
+</html>
